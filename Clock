@@ -1,0 +1,101 @@
+module Clock(clk,rst,up,M_a,SS_a,D_a,M_m,SS_m,D_m);
+input clk,up,rst;
+output wire [3:0]M_a,M_m,D_a,D_m;
+output wire [6:0]SS_a,SS_m;
+counter_add haha1(clk,rst,up,M_a,SS_a,D_a);
+counter_minus haha2(clk,rst,up,M_m,SS_m,D_m);
+endmodule
+
+module counter_add(clk,rst,up,M,SS,D);  //加法功能
+input clk,up,rst;
+output reg [3:0]M,D;
+output reg [6:0]SS;
+initial begin
+	M=0;
+	D=0;
+	SS=0;
+end
+always @(posedge clk)		
+begin
+	if(up)
+	begin
+	if(rst)
+		D=0;
+	else begin
+		D=D+1;
+	if(D==10)
+		D=0;
+		   end
+	end
+end
+always @(negedge D[3])
+begin
+	if(up)
+	begin
+	if(rst)
+		SS=0;
+	else begin
+		SS=SS+1;
+	if (SS==60)
+		SS=0;
+			end
+	end
+end
+always @(negedge SS[5])
+begin
+	if(up)begin
+	if(rst)
+		M=0;
+	M=M+1;
+	if(M==10)
+		M=0;end
+end
+endmodule
+
+module counter_minus(clk,rst,up,M,SS,D);  //减法功能
+input clk,up,rst;
+output reg [3:0]M,D;
+output reg [6:0]SS;
+initial begin
+	M=0;
+	D=0;
+	SS=0;
+end
+always @(posedge clk)	
+begin
+	if(!up)begin
+	if(rst)
+		D=0;
+	else
+		begin
+		D=D-1;
+		if(D>10)
+			D=9;
+	   end
+		end
+end
+always @(posedge D[3])
+begin
+	if(!up)begin
+	if(rst)
+		SS=0;
+	else begin
+		SS=SS-1;
+		if(SS>60)
+			SS=59;
+			end
+			end
+end
+always @(posedge SS[5])
+begin
+if(!up)begin
+	if(rst)
+		M=0;
+	else begin
+		M=M-1;
+		if(M>10)
+			M=9;
+			end
+	end
+end
+endmodule
